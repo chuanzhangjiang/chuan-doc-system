@@ -16,6 +16,7 @@
 - [virtualbox](#virtualbox)
 - [htop资源管理器](#htop资源管理器)
 - [sensors cpu温度监控工具](#sensors-cpu温度监控工具)
+- [emacs](#emacs)
 
 软件安装前首先执行`sudo apt update`命令。
 
@@ -136,3 +137,8 @@ sudo apt install htop
 ```
 sudo apt install lm-sensors
 ``` 
+
+## emacs 
+```
+sudo apt install emacs
+```
