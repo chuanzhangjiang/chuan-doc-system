@@ -1,3 +1,4 @@
+#! https://zhuanlan.zhihu.com/p/265746455
 # play项目初始配置文档
 - [新建play项目](#新建play项目)
 - [运行项目](#运行项目)
@@ -43,7 +44,7 @@ play.http.secret.key=${?PLAY_SECREAT_KEY}
 ```
 export PLAY_SECREAT_KEY='QCY?tAnfk?aZ?iwrNwnxIlR6CTf:G3gf:90Latabg@5241AB`R5W:1uDFN];Ik@n'
 ```
-刷新.bashrc文件.(如无效请重启电脑)
+刷新.bashrc文件.(关闭所有vscode界面和terminal界面)
 ```
 source .bashrc
 ```
@@ -70,10 +71,10 @@ slick.dbs.default.db.password=${?MYSQL_PSD}
 ```
 ~/.bashrc中添加环境变量:
 ```
-export MYSQL_USER='root'
-export MYSQL_PSD='12345678'
+export MYSQL_USER='{用户名}'
+export MYSQL_PSD='{密码}'
 ```
-刷新.bashrc文件
+刷新.bashrc文件.(关闭所有vscode界面和terminal界面)
 ```
 source ~/.bashrc
 ```
