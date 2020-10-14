@@ -17,6 +17,7 @@
 - [htop资源管理器](#htop资源管理器)
 - [sensors cpu温度监控工具](#sensors-cpu温度监控工具)
 - [emacs](#emacs)
+- [输入法](#输入法)
 
 软件安装前首先执行`sudo apt update`命令。
 
@@ -142,3 +143,22 @@ sudo apt install lm-sensors
 ```
 sudo apt install emacs
 ```
+## 输入法
+安装fcitx输入框架
+```
+sudo apt install fcitx
+```
+将默认输入框架设置为fcitx
+```
+im-config # 确定 -》选择fcitx
+```
+安装google拼音输入法
+```
+sudo apt install fcitx-googlepinyin -y
+```
+配置google拼音输入法
+```
+fcitx-config-gtk3
+```
+![配置1](fcitx-config01.png)
+![配置2](fcitx-config02.png)

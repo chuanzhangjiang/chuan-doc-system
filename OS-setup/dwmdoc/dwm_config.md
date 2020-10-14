@@ -77,9 +77,9 @@ $ git clone https://github.com/chuanzhangjiang/dwm.git
 ```
 $ git clone https://github.com/chuanzhangjiang/dwm-script.git
 ```
-将所有脚本放入`～/.dwm`目录，如果没有此目录请自行创建
+将脚本文件软链接到`～/.dwm`目录
 ```
-$ ~/脚本/目录$ cp * ~/.dwm
+$ ln -s  ~/dwm-script的目录 ~/.dwm
 ```
 移动到dwm源码目录执行安装命令
 ```
