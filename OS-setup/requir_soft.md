@@ -117,6 +117,14 @@ curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash
 
 sudo apt install -y nodejs
 ```
+## node安装的软件包更新命令(如vue-cli)
+```
+sudo npm update -g [可更上特定包名，不加就更新所有]
+```
+## 安装vue-cli
+```
+sudo npm install -g @vue/cli
+```
 
 ## virtualbox
 ```
