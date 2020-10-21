@@ -13,11 +13,14 @@
 - [截图工具](#截图工具)
 - [VLC播放器](#vlc播放器)
 - [node环境](#node环境)
+- [node安装的软件包更新命令(如vue-cli)](#node安装的软件包更新命令如vue-cli)
+- [安装vue-cli](#安装vue-cli)
 - [virtualbox](#virtualbox)
 - [htop资源管理器](#htop资源管理器)
 - [sensors cpu温度监控工具](#sensors-cpu温度监控工具)
 - [emacs](#emacs)
 - [输入法](#输入法)
+- [atool](#atool)
 
 软件安装前首先执行`sudo apt update`命令。
 
@@ -170,3 +173,9 @@ fcitx-config-gtk3
 ```
 ![配置1](fcitx-config01.png)
 ![配置2](fcitx-config02.png)
+
+## atool
+ranger文件解压缩支持工具
+```
+sudo apt install atool
+```
