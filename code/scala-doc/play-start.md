@@ -84,6 +84,7 @@ source ~/.bashrc
 ```
 ### 使用数据库自动演进（evolutions）
 1.创建如下目录，其中default表示数据库名称（图中为默认数据库）,创建sql文件以1,2,3命名，表示时间先后顺序。
+
 ![evolutions](sql_evolutions.png)
 
 2.sql文件样例：
@@ -138,20 +139,25 @@ DROP TABLE operator;
 写好sql之后运行一次项目，然后打开项目网页，会提示运行脚本，运行即可。
 ### 使用slick自动生成数据库操作代码
 项目源码目录新建scala文件,如下图:
+
 ![code_gen](slick_code_gen.png)
+
 `Codegen.scala`文件内容样例如下:
 ```
-object Codegen extends App{
+object CodeGen extends App {
+  val dbName = "manager-sys-demo"
+  val dbUserName = System.getenv("MYSQL_USER")
+  val dbPass = System.getenv("MYSQL_PSD")
   slick.codegen.SourceCodeGenerator.main(
-      Array(
-          "slick.jdbc.MySQLProfile",
-          "com.mysql.jdbc.Driver",
-          "jdbc:mysql://192.168.1.249:3306/seed-store?useSSL=false&characterEncoding=UTF-8",
-          "/home/chuanzhangjiang/scala_project/seed-store/app/",
-          "models",
-          "sql用户名",
-          "sql密码"
-      )
+    Array(
+      "slick.jdbc.MySQLProfile",
+      "com.mysql.jdbc.Driver",
+      s"jdbc:mysql://192.168.1.249:3306/${dbName}?useSSL=false&characterEncoding=UTF-8",
+      "/home/chuanzhangjiang/Desktop/source-code/manager-sys-demo/manager-sys-demo/app",
+      "models",
+      dbUserName,
+      dbPass
+    )
   )
 }
 ```
