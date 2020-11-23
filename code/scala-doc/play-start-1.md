@@ -1,12 +1,20 @@
 #! https://zhuanlan.zhihu.com/p/265746455
-# play项目初始配置文档
+# scala使用playframwork开发webApp系列壹——项目搭建
+- [系列目录](#系列目录)
 - [新建play项目](#新建play项目)
 - [运行项目](#运行项目)
+- [配置依赖](#配置依赖)
 - [配置数据库(mysql)](#配置数据库mysql)
-  - [依赖](#依赖)
-  - [配置](#配置)
   - [使用数据库自动演进（evolutions）](#使用数据库自动演进evolutions)
-  - [使用slick自动生成数据库操作代码](#使用slick自动生成数据库操作代码)
+  - [使用`slick codegen`自动生成数据库操作代码](#使用slick-codegen自动生成数据库操作代码)
+
+## 系列目录
+[**scala使用playframwork开发webApp系列壹——项目搭建**](https://zhuanlan.zhihu.com/p/265746455)
+
+[scala使用playframwork开发webApp系列二——slick使用](https://zhuanlan.zhihu.com/p/286630566)
+
+[scala使用playframwork开发webApp系列三——CSRF过滤器配置](https://zhuanlan.zhihu.com/p/301350500)
+
 ## 新建play项目
 ```
 sbt new playframework/play-scala-seed.g8
@@ -40,7 +48,7 @@ application.conf文件添加screatkey
 ```
 play.http.secret.key=${?PLAY_SECREAT_KEY}
 ```
-~/.bashrc中添加环境变量:
+~/.bashrc中添加环境变量(如果使用zsh则添加在~/.zshrc中):
 ```
 export PLAY_SECREAT_KEY='QCY?tAnfk?aZ?iwrNwnxIlR6CTf:G3gf:90Latabg@5241AB`R5W:1uDFN];Ik@n'
 ```
@@ -48,18 +56,18 @@ export PLAY_SECREAT_KEY='QCY?tAnfk?aZ?iwrNwnxIlR6CTf:G3gf:90Latabg@5241AB`R5W:1u
 ```
 source .bashrc
 ```
-## 配置数据库(mysql)
-### 依赖
+## 配置依赖
 在build.sbt中添加如下依赖
 ```
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "5.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "5.0.0",
-  "com.typesafe.slick" %% "slick-codegen" % "3.3.2",
-  "mysql" % "mysql-connector-java" % "5.1.41"
+  "com.typesafe.slick" %% "slick-codegen" % "3.3.3",
+  "mysql" % "mysql-connector-java" % "5.1.41",
+  "org.mindrot" % "jbcrypt" % "0.4"
 )
 ```
-### 配置
+## 配置数据库(mysql)
 在application.conf中添加配置(db.url自行替换):
 ```
 # Default database configuration
@@ -137,23 +145,29 @@ DELETE FROM operator where username = 'admin';
 DROP TABLE operator;
 ```
 写好sql之后运行一次项目，然后打开项目网页，会提示运行脚本，运行即可。
-### 使用slick自动生成数据库操作代码
-项目源码目录新建scala文件,如下图:
+### 使用`slick codegen`自动生成数据库操作代码
+方法一、在项目中创建一个main方法，每次数据库修改手动运行此main方法：
+
+在项目源码目录新建scala文件,如下图:
 
 ![code_gen](slick_code_gen.png)
 
 `Codegen.scala`文件内容样例如下:
 ```
+import java.io.File
 object CodeGen extends App {
+  val dbHost = "localhost:3306"
+  // val dbHost = "192.168.1.249:3306"
   val dbName = "manager-sys-demo"
   val dbUserName = System.getenv("MYSQL_USER")
   val dbPass = System.getenv("MYSQL_PSD")
+  val sourceCodeDir = new File("").getAbsolutePath() + File.separator + "app"
   slick.codegen.SourceCodeGenerator.main(
     Array(
       "slick.jdbc.MySQLProfile",
       "com.mysql.jdbc.Driver",
-      s"jdbc:mysql://192.168.1.249:3306/${dbName}?useSSL=false&characterEncoding=UTF-8",
-      "/home/chuanzhangjiang/Desktop/source-code/manager-sys-demo/manager-sys-demo/app",
+      s"jdbc:mysql://${dbHost}/${dbName}?useSSL=false&characterEncoding=UTF-8",
+      sourceCodeDir,
       "models",
       dbUserName,
       dbPass
@@ -161,5 +175,54 @@ object CodeGen extends App {
   )
 }
 ```
-`/home/chuanzhangjiang/scala_project/seed-store/app/`源码目录,`models`为源码输出的包。
-数据库配置完成之后运行Codegen.scala即可。
+`/home/chuanzhangjiang/scala_project/seed-store/app/`源码目录,`models`为源码输出的包，使用里面的`Tables`对象即可。
+每次数据库有修改，手动运行`Codegen.scala`即可。
+方法二、配置sbt脚本，项目每次编译自动生成`Tables`对象:
+修改`project`目录下的`plugins.sbt`文件,添加如下内容：
+```
+addSbtPlugin("com.github.tototoshi" % "sbt-slick-codegen" % "1.4.0")
+
+//根据你所使用的数据库而定
+libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.41"
+```
+
+修改`build.sbt`,添加如下内容:
+```
+import slick.codegen.SourceCodeGenerator
+import slick.{model => m}
+
+val hosetName = "//localhost:3306"
+val dbName = "manager-sys-demo"
+
+// required
+slickCodegenSettings
+
+// required
+// Register codegen hook
+sourceGenerators in Compile += slickCodegen.taskValue
+
+// required 配置数据库url
+slickCodegenDatabaseUrl := s"jdbc:mysql:${hosetName}/${dbName}?useSSL=false&characterEncoding=UTF-8"
+
+// required 从环境变量中获取登录数据库的用户名
+slickCodegenDatabaseUser := System.getenv("MYSQL_USER")
+
+// required 从环境变量中获取数据库密码
+slickCodegenDatabasePassword := System.getenv("MYSQL_PSD")
+
+// required slickCodegen数据库驱动,非字符串
+slickCodegenDriver := slick.jdbc.MySQLProfile
+
+// required jdbc驱动,字符串
+slickCodegenJdbcDriver := "com.mysql.jdbc.Driver"
+
+// optional but maybe you want `Tables`对象的包名
+slickCodegenOutputPackage := "models"
+
+//optional Tables.scala输出目录
+// slickCodegenOutputDir := (sourceManaged in Compile).value
+```
+
+完成以上配置，sbt将在你每次编译项目的时候自动生产`Tables`对象。
+
+附上`slick-codegen`sbt插件项目[地址](https://github.com/tototoshi/sbt-slick-codegen)。
