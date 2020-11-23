@@ -221,6 +221,10 @@ slickCodegenOutputPackage := "models"
 
 //optional Tables.scala输出目录
 // slickCodegenOutputDir := (sourceManaged in Compile).value
+
+// optional 忽略指定表
+// For example, to exclude play evolutions play_evolutions table from the target of codegen. This still applies after slickCodegenIncludedTables.
+slickCodegenExcludedTables := Seq("play_evolutions")
 ```
 
 完成以上配置，sbt将在你每次编译项目的时候自动生产`Tables`对象。
